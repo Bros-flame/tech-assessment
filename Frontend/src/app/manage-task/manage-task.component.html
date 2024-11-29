@@ -1,0 +1,163 @@
+<div class="container mt-5">
+    <!-- Header with Logout -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="text-primary fw-bold">Task Management</h2>
+      <button class="btn btn-outline-danger" (click)="logout()">Log out</button>
+    </div>
+  
+    <!-- Create New Task and Search -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button class="btn btn-success" (click)="openModal()">+ Create New Task</button>
+      <select class="btn btn-success" [(ngModel)]="selectedStatus" (change)="filterByStatus()">
+        <option value="All">All</option>
+        <option value="Completed">Completed</option>
+        <option value="Incomplete">Incomplete</option>
+      </select>
+      <div class="input-group w-50">
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          placeholder="Search tasks..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="filterTasks()"
+        />
+        <span class="input-group-text bg-primary text-white">
+          <i class="bi bi-search"></i>
+        </span>
+      </div>
+    </div>
+  
+    <!-- Tasks Table -->
+    <table class="table table-hover table-bordered text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Due Date</th>
+          <th>Completed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of filteredTasks">
+          <td>{{ task.id }}</td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.dueDate }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'bg-success': task.completed,
+                'bg-secondary': !task.completed
+              }"
+            >
+              {{ task.completed ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="openModal(task)">
+              Edit
+            </button>
+            <button class="btn btn-danger btn-sm ms-2" (click)="deleteTask(task.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredTasks.length === 0">
+          <td colspan="6" class="text-muted">No tasks found.</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <!-- Modal -->
+    <div
+      class="modal fade show"
+      style="display: block;"
+      tabindex="-1"
+      role="dialog"
+      *ngIf="isModalVisible"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-primary fw-bold">
+              {{ isEditMode ? 'Edit Task' : 'Create Task' }}
+            </h5>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+              <!-- Title -->
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input id="title" class="form-control" formControlName="title" />
+                <div
+                  *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"
+                  class="text-danger small"
+                >
+                  Title is required.
+                </div>
+              </div>
+  
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input
+                  id="description"
+                  class="form-control"
+                  formControlName="description"
+                />
+                <div
+                  *ngIf="taskForm.get('description')?.invalid && taskForm.get('description')?.touched"
+                  class="text-danger small"
+                >
+                  Description is required.
+                </div>
+              </div>
+  
+              <!-- Due Date -->
+              <div class="mb-3">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <input
+                  type="date"
+                  id="dueDate"
+                  class="form-control"
+                  formControlName="dueDate"
+                />
+                <div
+                  *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched"
+                  class="text-danger small"
+                >
+                  Due Date is required.
+                </div>
+              </div>
+  
+              <!-- Completed Checkbox -->
+              <div class="form-check mb-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="completed"
+                  formControlName="completed"
+                />
+                <label for="completed" class="form-check-label">Completed</label>
+              </div>
+  
+              <!-- Save Button -->
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                [disabled]="taskForm.invalid"
+              >
+                Save
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,67 @@
+<div class="container-fluid login-page vh-100 d-flex justify-content-center align-items-center">
+    <div class="col-md-4 bg-light p-5 rounded-3 shadow">
+      <!-- Error Alerts -->
+      <div *ngIf="showBadCred" class="alert alert-danger text-center" role="alert">
+        You have entered the wrong Username or Password.
+      </div>
+      <div *ngIf="showAlreadyInUse" class="alert alert-danger text-center" role="alert">
+        Username is already in use.
+      </div>
+  
+      <!-- Title -->
+      <h2 class="text-center text-primary mb-4 fw-bold">
+        {{ action === 'login' ? 'SIGN IN' : 'REGISTER' }}
+      </h2>
+  
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Username Field -->
+        <div class="form-floating mb-3">
+          <input
+            id="username"
+            type="text"
+            class="form-control"
+            placeholder="Username"
+            formControlName="username"
+            [ngClass]="{ 'is-invalid': loginForm.get('username')?.invalid && loginForm.get('username')?.touched }"
+          />
+          <label for="username">Username</label>
+          <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="invalid-feedback">
+            <small *ngIf="loginForm.get('username')?.hasError('required')">Username is required.</small>
+            <small *ngIf="loginForm.get('username')?.hasError('minlength')">Username must be at least 3 characters.</small>
+          </div>
+        </div>
+  
+        <!-- Password Field -->
+        <div class="form-floating mb-3">
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            placeholder="Password"
+            formControlName="password"
+            [ngClass]="{ 'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
+          />
+          <label for="password">Password</label>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback">
+            <small *ngIf="loginForm.get('password')?.hasError('required')">Password is required.</small>
+            <small *ngIf="loginForm.get('password')?.hasError('minlength')">Password must be at least 6 characters.</small>
+          </div>
+        </div>
+  
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="loginForm.invalid">
+          {{ action === 'login' ? 'Sign In' : 'Register' }}
+        </button>
+      </form>
+  
+      <!-- Link to Switch Between Login/Register -->
+      <p class="mt-3 text-center">
+        {{ action === 'login' ? "Don't" : 'Already' }} have an account?
+        <a class="text-primary fw-bold" style="cursor: pointer;" (click)="switchAction()">
+          {{ action === 'login' ? 'Register' : 'Log In' }}
+        </a>
+      </p>
+    </div>
+  </div>
+  
